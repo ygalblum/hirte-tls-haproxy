@@ -69,4 +69,4 @@ frontend main
 #---------------------------------------------------------------------
 backend hirte
     balance     roundrobin
-    server  hirte 172.31.28.15:2021 ssl crt /var/lib/haproxy/cert verify required ca-file /var/lib/haproxy/ca-certificate.pem
+    server  hirte {{ manager_address }}:2021 ssl crt /var/lib/haproxy/cert verify required ca-file /var/lib/haproxy/ca-certificate.pem

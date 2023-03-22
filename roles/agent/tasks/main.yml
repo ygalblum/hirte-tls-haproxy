@@ -7,8 +7,8 @@
     src: agent.conf
     dest: /etc/hirte/agent.conf
 - name: Copy the HAProxy configuration file
-  ansible.builtin.copy:
-    src: haproxy.cfg
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
 - name: Allow HAProxy to open TCP sockets
   ansible.posix.seboolean:

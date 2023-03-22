@@ -45,6 +45,9 @@
   - set_fact:
       certs_dir: "{{ scratch_dir.path }}"
 
+  - set_fact:
+      manager_address: "{{ hostvars[groups['manager'][0]]['ansible_facts']['default_ipv4']['address']}}"
+
 - name: Setup Hirte Manager
   hosts: manager
   become: true
