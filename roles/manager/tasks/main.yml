@@ -2,6 +2,7 @@
   ansible.builtin.package:
     name:
     - hirte
+    - hirte-ctl
 - name: Disable SELinux
   ansible.posix.selinux:
     state: disabled
