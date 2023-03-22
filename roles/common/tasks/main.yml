@@ -13,3 +13,38 @@
     - bash-completion
     - vim
     - jq
+
+- name: Generate Certificate
+  delegate_to: localhost
+  become: false
+  block:
+  - name: Create private key
+    community.crypto.openssl_privatekey:
+      path: "{{ certs_dir }}/cert.key"
+
+  - name: Create certificate signing request (CSR)
+    community.crypto.openssl_csr_pipe:
+      privatekey_path: "{{ certs_dir }}/cert.key"
+      subject_alt_name:
+        - "IP:{{ ansible_facts.default_ipv4.address }}"
+    register: csr
+
+  - name: Sign certificate with our CA
+    community.crypto.x509_certificate:
+      path: "{{ certs_dir }}/cert.pem"
+      csr_content: "{{ csr.csr }}"
+      provider: ownca
+      ownca_path: "{{ certs_dir }}/ca-certificate.pem"
+      ownca_privatekey_path: "{{ certs_dir }}/ca-certificate.key"
+      ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+      ownca_not_after: +365d  # valid for one year
+      ownca_not_before: "-1d"  # valid since yesterday
+
+- name: Copy the certificates
+  ansible.builtin.copy:
+    src: "{{ certs_dir }}/{{ item }}"
+    dest: /var/lib/haproxy/
+  loop:
+  - ca-certificate.pem
+  - cert.key
+  - cert.pem
