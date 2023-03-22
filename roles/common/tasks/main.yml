@@ -1,0 +1,15 @@
+- name: Upgrade all packages
+  package:
+    name: "*"
+    state: latest
+- name: Enable hirte copr
+  community.general.copr:
+    name: mperina/hirte-snapshot
+    chroot: centos-stream-9
+- name: Install packages
+  ansible.builtin.package:
+    name:
+    - haproxy
+    - bash-completion
+    - vim
+    - jq

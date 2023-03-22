@@ -1,50 +1,16 @@
 - name: Setup Hirte Manager
   hosts: manager
   become: true
-  tasks:
-  - set_fact:
-        repository_arch: "{{ ansible_architecture if ansible_architecture == 'x86_64' else 'aarch64'}}"
-  - name: Upgrade all packages
-    package:
-      name: "*"
-      state: latest
-    register: result
-    retries: 5
-    until: result is success
-  - name: Enable hirte copr
-    community.general.copr:
-      name: mperina/hirte-snapshot
-      chroot: centos-stream-9
-  - name: Install packages
-    ansible.builtin.package:
-      name:
-      - hirte
-      - haproxy
-      - bash-completion
-      - vim
-      - jq
-  - name: Set the hirte executable's SELinux label
-    community.general.sefcontext:
-      target: /usr/bin/hirte
-      setype: init_exec_t
-      state: present
-  - name: Copy the Hirte socket unit file
-    ansible.builtin.copy:
-      src: manager/hirte.socket
-      dest: /usr/lib/systemd/system/hirte.socket
-  - name: Copy the Hirte Manager configuration file
-    ansible.builtin.copy:
-      src: manager/hirte.conf
-      dest: /etc/hirte/hirte.conf
-  - name: Copy the HAProxy configuration file
-    ansible.builtin.copy:
-      src: manager/haproxy.cfg
-      dest: /etc/haproxy/haproxy.cfg
-  - name: Allow HAProxy to open TCP sockets
-    ansible.posix.seboolean:
-      name: haproxy_connect_any
-      state: true
-      persistent: true
+  roles:
+  - common
+  - manager
+
+- name: Setup Agents
+  hosts: agents
+  become: true
+  roles:
+  - common
+  - agent
 
 
   # - name: Generate certificates and create podman secrets for them
@@ -71,62 +37,5 @@
   #     loop_control:
   #       loop_var: service
 
-  - name: Run daemon reload to so changes to the socket file take affect
-    ansible.builtin.systemd:
-      daemon_reload: yes
-  - name: Start the Hirte Manager Service
-    ansible.builtin.systemd:
-      name: hirte.socket
-      state: started
-  - name: Start the HAProxy Service
-    ansible.builtin.systemd:
-      name: haproxy
-      state: started
 
 
-- name: Setup Agents
-  hosts: agents
-  become: true
-  tasks:
-  - set_fact:
-        repository_arch: "{{ ansible_architecture if ansible_architecture == 'x86_64' else 'aarch64'}}"
-  - name: Upgrade all packages
-    package:
-      name: "*"
-      state: latest
-    register: result
-    retries: 5
-    until: result is success
-  - name: Enable hirte copr
-    community.general.copr:
-      name: mperina/hirte-snapshot
-      chroot: centos-stream-9
-  - name: Install packages
-    ansible.builtin.package:
-      name:
-      - hirte-agent
-      - haproxy
-      - bash-completion
-      - vim
-      - jq
-  - name: Copy the Hirte Agent configuration file
-    ansible.builtin.copy:
-      src: agent/agent.conf
-      dest: /etc/hirte/agent.conf
-  - name: Copy the HAProxy configuration file
-    ansible.builtin.copy:
-      src: agent/haproxy.cfg
-      dest: /etc/haproxy/haproxy.cfg
-  - name: Allow HAProxy to open TCP sockets
-    ansible.posix.seboolean:
-      name: haproxy_connect_any
-      state: true
-      persistent: true
-  - name: Start the HAProxy Service
-    ansible.builtin.systemd:
-      name: haproxy
-      state: started
-  - name: Start the Hirte Manager Service
-    ansible.builtin.systemd:
-      name: hirte-agent.service
-      state: started
