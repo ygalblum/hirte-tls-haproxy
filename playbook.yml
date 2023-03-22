@@ -1,0 +1,86 @@
+- name: Setup Hirte Manager
+  hosts: manager
+  become: true
+  vars:
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd/"
+  tasks:
+  - set_fact:
+        repository_arch: "{{ ansible_architecture if ansible_architecture == 'x86_64' else 'aarch64'}}"
+  - name: Upgrade all packages
+    package:
+      name: "*"
+      state: latest
+    register: result
+    retries: 5
+    until: result is success
+  - name: Enable hirte copr
+    community.general.copr:
+      name: mperina/hirte-snapshot
+      chroot: centos-stream-9
+  - name: Install packages
+    ansible.builtin.package:
+      name:
+      - hirte
+      - haproxy
+      - bash-completion
+      - vim
+      - jq
+  - name: Set the hirte executable's SELinux label
+    community.general.sefcontext:
+      target: /usr/bin/hirte
+      setype: init_exec_t
+      state: present
+  - name: Copy the Hirte socket unit file
+    ansible.builtin.copy:
+      src: manager/hirte.socket
+      dest: /usr/lib/systemd/system/hirte.socket
+  - name: Copy the Hirte Manager configuration file
+    ansible.builtin.copy:
+      src: manager/hirte.conf
+      dest: /etc/hirte/hirte.conf
+  - name: Copy the HAProxy configuration file
+    ansible.builtin.copy:
+      src: manager/haproxy.cfg
+      dest: /etc/haproxy/haproxy.cfg
+  - name: Allow HAProxy to open TCP sockets
+    ansible.posix.seboolean:
+      name: haproxy_connect_any
+      state: true
+      persistent: true
+
+
+  # - name: Generate certificates and create podman secrets for them
+  #   block:
+  #   - name: Create a temporary directory
+  #     ansible.builtin.tempfile:
+  #       state: directory
+  #       suffix: hirte
+  #     register: scratch_dir
+
+  #   - set_fact:
+  #       secret_ca_passphrase: "{{ lookup('community.general.random_string') }}"
+
+  #   - name: Generate the CA certificate
+  #     include_tasks: "tasks/generate_ca.yml"
+
+  #   - name: Generate the CA certificate
+  #     include_tasks: "tasks/generate_certs_secrets.yml"
+  #     loop:
+  #     - name: manager
+  #       ip: "172.18.30.2"
+  #     - name: agent
+  #       ip: "172.18.30.3"
+  #     loop_control:
+  #       loop_var: service
+
+  - name: Run daemon reload to so changes to the socket file take affect
+    ansible.builtin.systemd:
+      daemon_reload: yes
+  - name: Start the Hirte Manager Service
+    ansible.builtin.systemd:
+      name: hirte.socket
+      state: started
+  - name: Start the HAProxy Service
+    ansible.builtin.systemd:
+      name: haproxy
+      state: started
