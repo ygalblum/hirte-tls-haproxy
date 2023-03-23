@@ -11,7 +11,8 @@
         suffix: hirte
       register: scratch_dir
 
-    - set_fact:
+    - name: Generate a passphrase for the CA certificate's private key
+      set_fact:
         secret_ca_passphrase: "{{ lookup('community.general.random_string') }}"
 
     - name: Create private key with password protection
@@ -27,10 +28,10 @@
         common_name: Ansible CA
         use_common_name_for_san: false  # since we do not specify SANs, don't use CN as a SAN
         basic_constraints:
-          - 'CA:TRUE'
+        - 'CA:TRUE'
         basic_constraints_critical: true
         key_usage:
-          - keyCertSign
+        - keyCertSign
         key_usage_critical: true
       register: ca_csr
 
@@ -42,18 +43,22 @@
         privatekey_passphrase: "{{ secret_ca_passphrase }}"
         provider: selfsigned
 
-  - set_fact:
+  - name: Save the scratch_dir path as certs_dir
+    set_fact:
       certs_dir: "{{ scratch_dir.path }}"
 
-  - set_fact:
-      manager_address: "{{ hostvars[groups['manager'][0]]['ansible_facts']['default_ipv4']['address']}}"
+  - name: Set the manager_address
+    set_fact:
+      manager_address: "{{ hostvars[groups['manager'][0]]['ansible_facts']['default_ipv4']['address'] }}"
 
-  - set_fact:
-      allowed_node_names : "{{ allowed_node_names|default([]) + [ hostvars[item]['hirte_node_name'] ] }}"
+  - name: Calculate the list of node names
+    set_fact:
+      allowed_node_names: "{{ allowed_node_names|default([]) + [ hostvars[item]['hirte_node_name'] ] }}"
     loop: "{{ groups.all }}"
 
-  - set_fact:
-      allowed_nodes: "{{allowed_node_names|join(',')}}"
+  - name: Calculate the string for the allowed node names
+    set_fact:
+      allowed_nodes: "{{ allowed_node_names|join(',') }}"
 
 - name: Setup Hirte Manager
   hosts: manager

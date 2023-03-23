@@ -18,16 +18,25 @@
   ansible.builtin.copy:
     src: hirte.socket
     dest: /usr/lib/systemd/system/hirte.socket
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Copy the Hirte Manager configuration file
   ansible.builtin.template:
     src: hirte.conf.j2
     dest: /etc/hirte/hirte.conf
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Copy the HAProxy configuration file
   ansible.builtin.copy:
     src: haproxy.cfg
     dest: /etc/haproxy/conf.d/manager.cfg
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Allow HAProxy to open TCP sockets
   ansible.posix.seboolean:
@@ -37,7 +46,7 @@
 
 - name: Run daemon reload to so changes to the socket file take affect
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Start the Hirte Manager Service
   ansible.builtin.systemd:

@@ -7,11 +7,18 @@
   ansible.builtin.template:
     src: agent.conf.j2
     dest: /etc/hirte/agent.conf
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Copy the HAProxy configuration file
   ansible.builtin.template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/conf.d/agent.cfg
+    owner: root
+    group: root
+    mode: '0644'
+
 
 - name: Reload the HAProxy Service configuration
   ansible.builtin.systemd:

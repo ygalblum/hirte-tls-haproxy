@@ -28,7 +28,7 @@
     community.crypto.openssl_csr_pipe:
       privatekey_path: "{{ certs_dir }}/cert.key"
       subject_alt_name:
-        - "IP:{{ ansible_facts.default_ipv4.address }}"
+      - "IP:{{ ansible_facts.default_ipv4.address }}"
     register: csr
 
   - name: Sign certificate with our CA
@@ -46,6 +46,9 @@
   ansible.builtin.copy:
     src: "{{ certs_dir }}/{{ item }}"
     dest: /var/lib/haproxy/
+    owner: root
+    group: root
+    mode: '0644'
   loop:
   - ca-certificate.pem
   - cert.key
@@ -55,6 +58,9 @@
   ansible.builtin.copy:
     src: haproxy.cfg
     dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: '0644'
 
 - name: Start the HAProxy Service
   ansible.builtin.systemd:
