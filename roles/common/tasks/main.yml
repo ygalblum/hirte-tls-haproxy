@@ -48,3 +48,8 @@
   - ca-certificate.pem
   - cert.key
   - cert
+
+- name: Copy the HAProxy configuration file
+  ansible.builtin.copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
