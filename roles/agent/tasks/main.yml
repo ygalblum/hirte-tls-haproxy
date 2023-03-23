@@ -2,23 +2,28 @@
   ansible.builtin.package:
     name:
     - hirte-agent
+
 - name: Copy the Hirte Agent configuration file
   ansible.builtin.template:
     src: agent.conf.j2
     dest: /etc/hirte/agent.conf
+
 - name: Copy the HAProxy configuration file
   ansible.builtin.template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/conf.d/agent.cfg
+
 - name: Allow HAProxy to open TCP sockets
   ansible.posix.seboolean:
     name: haproxy_connect_any
     state: true
     persistent: true
+
 - name: Start the HAProxy Service
   ansible.builtin.systemd:
     name: haproxy
     state: reloaded
+
 - name: Start the Hirte Manager Service
   ansible.builtin.systemd:
     name: hirte-agent.service
