@@ -1,4 +1,4 @@
-- name: Install packages
+- name: Install the hirte-agent package
   ansible.builtin.package:
     name:
     - hirte-agent
@@ -13,18 +13,12 @@
     src: haproxy.cfg.j2
     dest: /etc/haproxy/conf.d/agent.cfg
 
-- name: Allow HAProxy to open TCP sockets
-  ansible.posix.seboolean:
-    name: haproxy_connect_any
-    state: true
-    persistent: true
-
-- name: Start the HAProxy Service
+- name: Reload the HAProxy Service configuration
   ansible.builtin.systemd:
     name: haproxy
     state: reloaded
 
-- name: Start the Hirte Manager Service
+- name: Start the Hirte Agent Service
   ansible.builtin.systemd:
     name: hirte-agent.service
     state: started

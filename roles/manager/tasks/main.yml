@@ -1,4 +1,4 @@
-- name: Install packages
+- name: Install the hirte and hirte-ctl packages
   ansible.builtin.package:
     name:
     - hirte
@@ -44,7 +44,7 @@
     name: hirte.socket
     state: started
 
-- name: Start the HAProxy Service
+- name: Reload the HAProxy Service configuration
   ansible.builtin.systemd:
     name: haproxy
     state: reloaded
