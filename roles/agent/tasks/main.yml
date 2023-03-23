@@ -18,7 +18,7 @@
 - name: Start the HAProxy Service
   ansible.builtin.systemd:
     name: haproxy
-    state: started
+    state: reloaded
 - name: Start the Hirte Manager Service
   ansible.builtin.systemd:
     name: hirte-agent.service

@@ -54,6 +54,7 @@
   roles:
   - common
   - manager
+  - agent
 
 - name: Setup Agents
   hosts: agents

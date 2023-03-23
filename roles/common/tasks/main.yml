@@ -53,3 +53,8 @@
   ansible.builtin.copy:
     src: haproxy.cfg
     dest: /etc/haproxy/haproxy.cfg
+
+- name: Start the HAProxy Service
+  ansible.builtin.systemd:
+    name: haproxy
+    state: started

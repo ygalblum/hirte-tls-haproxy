@@ -1,13 +1,13 @@
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
-frontend main
-    bind /var/lib/haproxy/hirte.sock
-    default_backend hirte
+frontend hirte-agent
+    bind /var/lib/haproxy/hirte-agent.sock
+    default_backend hirte-agent
 
 #---------------------------------------------------------------------
 # round robin balancing between the various backends
 #---------------------------------------------------------------------
-backend hirte
+backend hirte-agent
     balance     roundrobin
-    server  hirte {{ manager_address }}:2021 ssl crt /var/lib/haproxy/cert verify required ca-file /var/lib/haproxy/ca-certificate.pem
+    server  hirte-agent {{ manager_address }}:2021 ssl crt /var/lib/haproxy/cert verify required ca-file /var/lib/haproxy/ca-certificate.pem

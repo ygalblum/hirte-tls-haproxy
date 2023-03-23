@@ -38,4 +38,4 @@
 - name: Start the HAProxy Service
   ansible.builtin.systemd:
     name: haproxy
-    state: started
+    state: reloaded
