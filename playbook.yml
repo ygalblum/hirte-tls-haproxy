@@ -48,6 +48,13 @@
   - set_fact:
       manager_address: "{{ hostvars[groups['manager'][0]]['ansible_facts']['default_ipv4']['address']}}"
 
+  - set_fact:
+      allowed_node_names : "{{ allowed_node_names|default([]) + [ hostvars[item]['hirte_node_name'] ] }}"
+    loop: "{{ groups.all }}"
+
+  - set_fact:
+      allowed_nodes: "{{allowed_node_names|join(',')}}"
+
 - name: Setup Hirte Manager
   hosts: manager
   become: true

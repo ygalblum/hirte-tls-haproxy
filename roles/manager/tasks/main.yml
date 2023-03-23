@@ -16,8 +16,8 @@
     src: hirte.socket
     dest: /usr/lib/systemd/system/hirte.socket
 - name: Copy the Hirte Manager configuration file
-  ansible.builtin.copy:
-    src: hirte.conf
+  ansible.builtin.template:
+    src: hirte.conf.j2
     dest: /etc/hirte/hirte.conf
 - name: Copy the HAProxy configuration file
   ansible.builtin.copy:
