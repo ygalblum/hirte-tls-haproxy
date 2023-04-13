@@ -2,6 +2,7 @@
   ansible.builtin.package:
     name:
     - hirte-agent
+    - hirte-selinux
 
 - name: Copy the Hirte Agent configuration file
   ansible.builtin.template:

@@ -3,16 +3,7 @@
     name:
     - hirte
     - hirte-ctl
-
-- name: Disable SELinux
-  ansible.posix.selinux:
-    state: disabled
-
-- name: Set the hirte executable's SELinux label
-  community.general.sefcontext:
-    target: /usr/bin/hirte
-    setype: init_exec_t
-    state: present
+    - hirte-selinux
 
 - name: Copy the Hirte socket unit file
   ansible.builtin.copy:
