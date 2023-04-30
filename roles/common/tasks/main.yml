@@ -66,3 +66,10 @@
   ansible.builtin.systemd:
     name: haproxy
     state: started
+
+- name: Allow HAProxy to listen on tcp port 2021
+  community.general.seport:
+    ports: 2021
+    proto: tcp
+    setype: http_port_t
+    state: present

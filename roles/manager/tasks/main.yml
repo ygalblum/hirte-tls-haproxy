@@ -29,13 +29,6 @@
     group: root
     mode: '0644'
 
-- name: Allow HAProxy to listen on tcp port 2021
-  community.general.seport:
-    ports: 2021
-    proto: tcp
-    setype: http_port_t
-    state: present
-
 - name: Run daemon reload to so changes to the socket file take affect
   ansible.builtin.systemd:
     daemon_reload: true
