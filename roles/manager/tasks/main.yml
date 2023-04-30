@@ -24,7 +24,7 @@
 - name: Copy the HAProxy configuration file
   ansible.builtin.copy:
     src: haproxy.cfg
-    dest: /etc/haproxy/conf.d/manager.cfg
+    dest: /etc/haproxy/conf.d/hirte-manager.cfg
     owner: root
     group: root
     mode: '0644'
