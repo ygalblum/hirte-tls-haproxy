@@ -1,5 +1,5 @@
 [Socket]
-ListenStream=/var/lib/haproxy/hirte-manager.sock
+ListenStream=/var/lib/haproxy/bluechi-manager.sock
 
 [Install]
 WantedBy=multi-user.target

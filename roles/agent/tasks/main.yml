@@ -1,13 +1,13 @@
-- name: Install the hirte-agent package
+- name: Install the bluechi-agent package
   ansible.builtin.package:
     name:
-    - hirte-agent
-    - hirte-selinux
+    - bluechi-agent
+    - bluechi-selinux
 
-- name: Copy the Hirte Agent configuration file
+- name: Copy the BlueChi Agent configuration file
   ansible.builtin.template:
     src: agent.conf.j2
-    dest: /etc/hirte/agent.conf
+    dest: /etc/bluechi/agent.conf
     owner: root
     group: root
     mode: '0644'
@@ -15,7 +15,7 @@
 - name: Copy the HAProxy configuration file
   ansible.builtin.template:
     src: haproxy.cfg.j2
-    dest: /etc/haproxy/conf.d/hirte-agent.cfg
+    dest: /etc/haproxy/conf.d/bluechi-agent.cfg
     owner: root
     group: root
     mode: '0644'
@@ -26,7 +26,7 @@
     name: haproxy
     state: reloaded
 
-- name: Start the Hirte Agent Service
+- name: Start the BlueChi Agent Service
   ansible.builtin.systemd:
-    name: hirte-agent.service
+    name: bluechi-agent.service
     state: started

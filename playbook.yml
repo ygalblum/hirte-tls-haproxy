@@ -8,7 +8,7 @@
     - name: Create a temporary directory
       ansible.builtin.tempfile:
         state: directory
-        suffix: hirte
+        suffix: bluechi
       register: scratch_dir
 
     - name: Generate a passphrase for the CA certificate's private key
@@ -53,14 +53,14 @@
 
   - name: Calculate the list of node names
     set_fact:
-      allowed_node_names: "{{ allowed_node_names|default([]) + [ hostvars[item]['hirte_node_name'] ] }}"
+      allowed_node_names: "{{ allowed_node_names|default([]) + [ hostvars[item]['bluechi_node_name'] ] }}"
     loop: "{{ groups.all }}"
 
   - name: Calculate the string for the allowed node names
     set_fact:
       allowed_nodes: "{{ allowed_node_names|join(',') }}"
 
-- name: Setup Hirte Manager
+- name: Setup BlueChi Controller
   hosts: manager
   become: true
   roles:

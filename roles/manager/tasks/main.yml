@@ -1,22 +1,22 @@
-- name: Install the hirte and hirte-ctl packages
+- name: Install the bluechi-controller and bluechi-ctl packages
   ansible.builtin.package:
     name:
-    - hirte
-    - hirte-ctl
-    - hirte-selinux
+    - bluechi-controller
+    - bluechi-ctl
+    - bluechi-selinux
 
-- name: Copy the Hirte socket unit file
+- name: Copy the BlueChi socket unit file
   ansible.builtin.copy:
-    src: hirte.socket
-    dest: /usr/lib/systemd/system/hirte.socket
+    src: bluechi-controller.socket
+    dest: /usr/lib/systemd/system/bluechi-controller.socket
     owner: root
     group: root
     mode: '0644'
 
-- name: Copy the Hirte Manager configuration file
+- name: Copy the BlueChi Manager configuration file
   ansible.builtin.template:
-    src: hirte.conf.j2
-    dest: /etc/hirte/hirte.conf
+    src: bluechi-controller.conf.j2
+    dest: /etc/bluechi/bluechi-controller.conf
     owner: root
     group: root
     mode: '0644'
@@ -24,7 +24,7 @@
 - name: Copy the HAProxy configuration file
   ansible.builtin.copy:
     src: haproxy.cfg
-    dest: /etc/haproxy/conf.d/hirte-manager.cfg
+    dest: /etc/haproxy/conf.d/bluechi-controller.cfg
     owner: root
     group: root
     mode: '0644'
@@ -33,9 +33,9 @@
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: Start the Hirte Manager Service
+- name: Start the BlueChi Manager Socket
   ansible.builtin.systemd:
-    name: hirte.socket
+    name: bluechi-controller.socket
     state: started
 
 - name: Reload the HAProxy Service configuration
