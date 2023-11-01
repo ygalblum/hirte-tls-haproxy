@@ -7,7 +7,7 @@
 - name: Copy the BlueChi Agent configuration file
   ansible.builtin.template:
     src: agent.conf.j2
-    dest: /etc/bluechi/agent.conf
+    dest: /etc/bluechi/agent.conf.d/local_socket.conf
     owner: root
     group: root
     mode: '0644'
@@ -20,7 +20,6 @@
     group: root
     mode: '0644'
 
-
 - name: Reload the HAProxy Service configuration
   ansible.builtin.systemd:
     name: haproxy
@@ -30,3 +29,4 @@
   ansible.builtin.systemd:
     name: bluechi-agent.service
     state: started
+    enabled: true

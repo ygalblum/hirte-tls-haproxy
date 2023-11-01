@@ -16,7 +16,7 @@
 - name: Copy the BlueChi Manager configuration file
   ansible.builtin.template:
     src: bluechi-controller.conf.j2
-    dest: /etc/bluechi/bluechi-controller.conf
+    dest: /etc/bluechi/controller.conf.d/allowed_list.conf
     owner: root
     group: root
     mode: '0644'
@@ -37,6 +37,7 @@
   ansible.builtin.systemd:
     name: bluechi-controller.socket
     state: started
+    enabled: true
 
 - name: Reload the HAProxy Service configuration
   ansible.builtin.systemd:

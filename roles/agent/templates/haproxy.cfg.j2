@@ -2,6 +2,7 @@
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------
 frontend bluechi-agent
+    mode tcp
     bind /var/lib/haproxy/bluechi-agent.sock
     default_backend bluechi-agent
 
@@ -9,5 +10,6 @@ frontend bluechi-agent
 # round robin balancing between the various backends
 #---------------------------------------------------------------------
 backend bluechi-agent
+    mode tcp
     balance     roundrobin
     server  bluechi-agent {{ manager_address }}:2021 ssl crt /var/lib/haproxy/cert verify required ca-file /var/lib/haproxy/ca-certificate.pem

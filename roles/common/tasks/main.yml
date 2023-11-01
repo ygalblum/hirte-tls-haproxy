@@ -3,6 +3,11 @@
     name: "*"
     state: latest
 
+- name: DNF Enable CRB
+  ansible.builtin.shell:
+    cmd: dnf config-manager --set-enabled crb
+  changed_when: true
+
 - name: Install packages
   ansible.builtin.package:
     name:
@@ -10,6 +15,8 @@
     - bash-completion
     - vim
     - jq
+    - epel-release
+    - epel-next-release
 
 - name: Generate Certificate
   delegate_to: localhost
@@ -61,6 +68,7 @@
   ansible.builtin.systemd:
     name: haproxy
     state: started
+    enabled: true
 
 - name: Allow HAProxy to listen on tcp port 2021
   community.general.seport:
@@ -68,3 +76,4 @@
     proto: tcp
     setype: http_port_t
     state: present
+
